@@ -1,23 +1,42 @@
-import { useState } from 'react'
 import styles from './Form.module.css'
 import { FaUser, FaLock } from "react-icons/fa";
 import LinkButton from '../LinkButton/LinkButton';
+import { useState } from 'react';
+
+function useFormik({ initialValues }) {
+
+    const [values, setValues] = useState(initialValues)
+    
+    function handleChange(event) {
+        const fieldName = event.target.getAttribute('name')
+        const value = event.target.value
+        setValues({
+            ...values,
+            [fieldName]: value
+        })
+    }
+
+    return {
+        values,
+        handleChange
+    }
+}
 
 function Form() {
 
-    function cadastrarUsuario(e) {
-        e.preventDefault()
-        console.log(email)
-        console.log(password)
-        console.log('cadastrado')
-    }
-
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: ''
+        }
+    })
 
     return(
         <div className={styles.form}>
-            <form onSubmit={cadastrarUsuario}>
+            <form onSubmit={(e) => {
+                e.preventDefault()
+                console.log(formik.values)
+            }}>
                 <div className={styles.form_container}>
                     <FaUser />
                     <input className={styles.btn}
@@ -25,7 +44,8 @@ function Form() {
                         id="email" 
                         name="email" 
                         placeholder="Digite seu email"
-                        onChange={(e) => setEmail(e.target.value)} 
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
                     />
                 </div>
                 <div className={styles.form_container}>
@@ -35,8 +55,9 @@ function Form() {
                         id="password" 
                         name="password" 
                         placeholder="Digite sua senha"
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={formik.values.password}
                         autoComplete="off"
+                        onChange={formik.handleChange}
                     />
                 </div>
                 <div>
