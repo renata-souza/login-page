@@ -7,13 +7,20 @@ function Form() {
 
     function cadastrarUsuario(e) {
         e.preventDefault()
-        console.log(email)
-        console.log(password)
+        console.log(values)
         console.log('cadastrado')
     }
 
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
+    const [values, setValues] = useState()
+
+    function handleChange(event) {
+        const fieldName = event.target.getAttribute('name')
+        const value = event.target.value
+        setValues({
+            ...values,
+            [fieldName]: value
+        })
+    }
 
     return(
         <div className={styles.form}>
@@ -25,7 +32,7 @@ function Form() {
                         id="email" 
                         name="email" 
                         placeholder="Digite seu email"
-                        onChange={(e) => setEmail(e.target.value)} 
+                        onChange={handleChange} 
                     />
                 </div>
                 <div className={styles.form_container}>
@@ -35,7 +42,7 @@ function Form() {
                         id="password" 
                         name="password" 
                         placeholder="Digite sua senha"
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={handleChange}
                         autoComplete="off"
                     />
                 </div>
