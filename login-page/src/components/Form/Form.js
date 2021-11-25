@@ -1,12 +1,19 @@
 import styles from './Form.module.css'
 import { FaUser, FaLock } from "react-icons/fa";
 import LinkButton from '../LinkButton/LinkButton';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function useFormik({ initialValues }) {
+function useFormik({ initialValues, validate }) {
 
+    const [touched, setTouched] = useState({})
+    const [errors, setErrors] = useState({})
     const [values, setValues] = useState(initialValues)
     
+    useEffect(() => {
+        console.log('campo alterado', values)
+        validateValues(values)
+    }, [values])
+
     function handleChange(event) {
         const fieldName = event.target.getAttribute('name')
         const value = event.target.value
@@ -14,10 +21,28 @@ function useFormik({ initialValues }) {
             ...values,
             [fieldName]: value
         })
+
+    }
+
+    function handleBlur(event) {
+        const fieldName = event.target.getAttribute('name')
+        console.log(fieldName)
+        setTouched({
+            ...touched,
+            [fieldName]: true
+        })
+    }
+
+    function validateValues(values) {
+        setErrors(validate(values))
     }
 
     return {
         values,
+        errors,
+        touched,
+        handleBlur,
+        setErrors,
         handleChange
     }
 }
@@ -28,6 +53,19 @@ function Form() {
         initialValues: {
             email: '',
             password: ''
+        },
+        validate: function (values) {
+            const errors = {}
+        
+            if(!values.email.includes('@')) {
+                errors.email = 'Insira um email válido.'
+            }
+        
+            if(values.password.length < 8) {
+                errors.password = 'Insira uma senha válida'
+            }
+        
+            return errors
         }
     })
 
@@ -36,7 +74,8 @@ function Form() {
             <form onSubmit={(e) => {
                 e.preventDefault()
                 console.log(formik.values)
-            }}>
+            }}
+            >
                 <div className={styles.form_container}>
                     <FaUser />
                     <input className={styles.btn}
@@ -46,7 +85,9 @@ function Form() {
                         placeholder="Digite seu email"
                         value={formik.values.email}
                         onChange={formik.handleChange}
-                    />
+                        onBlur={formik.handleBlur}
+                    /> <br />
+                    {formik.touched.email && formik.errors.email && <span>{formik.errors.email}</span>}
                 </div>
                 <div className={styles.form_container}>
                     <FaLock />
@@ -58,7 +99,9 @@ function Form() {
                         value={formik.values.password}
                         autoComplete="off"
                         onChange={formik.handleChange}
-                    />
+                        onBlur={formik.handleBlur}
+                    /> <br />
+                    {formik.touched.password && formik.errors.password && <span>{formik.errors.password}</span>}
                 </div>
                 <div>
                     <LinkButton
