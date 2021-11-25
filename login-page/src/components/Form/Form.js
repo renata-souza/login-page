@@ -1,17 +1,63 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from './Form.module.css'
 import { FaUser, FaLock } from "react-icons/fa";
 import LinkButton from '../LinkButton/LinkButton';
 
 function Form() {
 
+    const initialValues = {
+        email:'',
+        password:''
+    }
+    const [values, setValues] = useState(initialValues)
+    const [errors, setErrors] = useState({})
+    const [touched, setTouched] = useState({})
+
+    useEffect(() => {
+        console.log('campo alterado', values)
+        validateValues(values)
+    }, [values])
+
     function cadastrarUsuario(e) {
-        e.preventDefault()
-        console.log(values)
-        console.log('cadastrado')
+
+        if (errors.email === undefined && errors.password === undefined){
+            console.log(values)
+            console.log('cadastrado')
+        } else if (touched === false){
+            console.log(errors, 'errors')
+            e.preventDefault()
+        } else {
+            console.log(errors, 'errors')
+            e.preventDefault()
+        }
+        
     }
 
-    const [values, setValues] = useState()
+    function handleBlur(event) {
+        const fieldName = event.target.getAttribute('name')
+        setTouched({
+            ...touched,
+            [fieldName]: true
+        })
+    }
+
+    function handleError(values) {
+        const errors = {}
+    
+        if(!values.email.includes('@')) {
+            errors.email = 'Insira um email válido.'
+        }
+    
+        if(values.password.length < 8) {
+            errors.password = 'Insira uma senha válida'
+        }
+    
+        return errors
+    }
+
+    function validateValues(values) {
+        setErrors(handleError(values))
+    }
 
     function handleChange(event) {
         const fieldName = event.target.getAttribute('name')
@@ -32,8 +78,10 @@ function Form() {
                         id="email" 
                         name="email" 
                         placeholder="Digite seu email"
-                        onChange={handleChange} 
-                    />
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    /> <br />
+                    {touched.email && errors.email && <span>{errors.email}</span>}
                 </div>
                 <div className={styles.form_container}>
                     <FaLock />
@@ -43,8 +91,10 @@ function Form() {
                         name="password" 
                         placeholder="Digite sua senha"
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         autoComplete="off"
-                    />
+                    /> <br />
+                    {touched.password && errors.password && <span>{errors.password}</span>}
                 </div>
                 <div>
                     <LinkButton
