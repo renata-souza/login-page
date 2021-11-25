@@ -69,12 +69,24 @@ function Form() {
         }
     })
 
+    function cadastrarUsuario(e) {
+
+        if (formik.errors.email === undefined && formik.errors.password === undefined){
+            console.log(formik.values)
+            console.log('cadastrado')
+        } else if (formik.touched === false){
+            console.log(formik.errors, 'errors')
+            e.preventDefault()
+        } else {
+            console.log(formik.errors, 'errors')
+            e.preventDefault()
+        }
+        
+    }
+
     return(
         <div className={styles.form}>
-            <form onSubmit={(e) => {
-                e.preventDefault()
-                console.log(formik.values)
-            }}
+            <form onSubmit={cadastrarUsuario}
             >
                 <div className={styles.form_container}>
                     <FaUser />
