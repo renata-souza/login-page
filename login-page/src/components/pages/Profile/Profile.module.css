@@ -1,0 +1,10 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.profile img {
+  max-width: 200px;
+}
