@@ -14,7 +14,6 @@ function Form() {
   const [touched, setTouched] = useState({});
 
   useEffect(() => {
-    console.log("campo alterado", values);
     validateValues(values);
   }, [values]);
 
@@ -24,8 +23,7 @@ function Form() {
       errors.email === undefined &&
       errors.password === undefined
     ) {
-      console.log(values);
-      console.log("usuário cadastrado");
+      newUser(values);
     } else if (touched === false) {
       console.log(errors, "errors");
       e.preventDefault();
@@ -74,6 +72,21 @@ function Form() {
     });
   }
 
+  function newUser(user) {
+    fetch("http://localhost:5000/users", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
     <div className={styles.form}>
       <form onSubmit={register}>
@@ -120,7 +133,7 @@ function Form() {
           )}
         </div>
         <div>
-          <LinkButton type="submit" text="Entrar" />
+          <LinkButton type="submit" text="Cadastrar" />
         </div>
       </form>
     </div>
